@@ -1,7 +1,30 @@
+#[derive(Default)]
 struct Expedition(Vec<Elf>);
+
+impl Expedition {
+    fn new() -> Self {
+        Default::default()
+    }
+
+    fn add_elf(&mut self, calories: Vec<u32>) {
+
+    }
+
+    fn max(&self) -> u32 {
+
+    }
+}
 
 struct Elf {
     calories: Vec<u32>,
+}
+
+impl Default for Elf {
+    fn default() -> Self {
+        Self {
+            calories: Default::default(),
+        }
+    }
 }
 
 impl Elf {
@@ -14,7 +37,12 @@ impl Elf {
     }
 }
 
-fn main() {}
+fn main() {
+    let v: Vec<u32> = vec![1, 2, 3];
+    assert_eq!(v.iter().sum::<u32>(), 6);
+    assert_eq!(v.iter().max().unwrap(), &3);
+
+}
 
 #[cfg(test)]
 mod day_1 {

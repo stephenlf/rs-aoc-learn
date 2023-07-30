@@ -1,1 +1,4 @@
 .vscode
+target/*
+aoc/target/*
+aoc/target
