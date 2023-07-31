@@ -1,5 +1,5 @@
 [workspace]
 members = ["*"]
-exclude = ["target"]
+exclude = ["target", "inputs"]
 
 # Challenge material

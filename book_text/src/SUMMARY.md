@@ -6,3 +6,4 @@
 
 - [Day 1: Calorie Counting](./day_1/input_modelling.md)
   - [Structs as Data Models](./day_1/2.datamodel_struct.md)
+  - [File Parsing and IO](./day_1/3.io.md)

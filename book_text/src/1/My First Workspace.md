@@ -12,8 +12,10 @@ Workspaces allow us to combine multiple packages within a single cargo project. 
 
 [workspace]
 members = ["*"]
-exclude = ["target"]  # cargo will build a "target" directory during compilation
-                      # causing subsequent compilations to fail if this is not included.
+exclude = ["target", "inputs"]  
+            # cargo will build a "target" directory during compilation
+            # causing subsequent compilations to fail if this is not included.
+            # We will store challenge inputs in the "inputs" folder.
 ```
 
 The `members` lines tells cargo that all packages initialized within our workspace directory belong to our workspace. 
