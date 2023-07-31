@@ -40,14 +40,12 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
-      - name: Move to book directory
-        run: cd book_text
       - name: Build with mdBook
-        run: mdbook build
+        run: mdbook build ./book_text
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: ./book
+          path: ./book_text/book
 
   # Deployment job
   deploy:
