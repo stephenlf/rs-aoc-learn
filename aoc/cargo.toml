@@ -1,5 +1,10 @@
 [workspace]
-members = ["*"]
-exclude = ["target", "inputs"]
+members = ["day_*"]     # Modified!
+exclude = []
 
-# Challenge material
+# Root package contains a library of shared functions.
+[package]
+name = "aoc"
+version = "0.1.0"
+edition = "2021"
+author = "Stephen Funk"
