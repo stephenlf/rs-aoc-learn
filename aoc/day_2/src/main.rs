@@ -1,3 +1,5 @@
+use aoc::read_as_lines;
+
 #[derive(PartialEq, Eq, Debug)]
 enum Hand {
     Rock(u32),
@@ -27,7 +29,21 @@ fn game(my_hand: &Hand, opp_hand: &Hand) -> u32 {
     }
 }
 
-fn main() {}
+fn main() {
+    let lines = read_as_lines("../inputs/day_2.txt").unwrap();
+
+    let mut total = 0;
+    
+    for line in lines {
+        let line = line.unwrap();
+        let mut chars = line.chars();
+        let opp_hand = Hand::try_from(chars.next().unwrap()).unwrap();
+        let my_hand = Hand::try_from(chars.last().unwrap()).unwrap();
+        total += game(&my_hand, &opp_hand);
+    }
+
+    println!("Part 1: {total}");
+}
 
 #[cfg(test)]
 mod day_2 {

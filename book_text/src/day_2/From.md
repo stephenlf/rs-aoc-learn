@@ -65,10 +65,23 @@ mod day_2_tests {
         assert_eq!(Hand::try_from('A'), Ok(Hand::Rock(1)));
         assert_eq!(Hand::try_from('B'), Ok(Hand::Paper(2)));
         assert_eq!(Hand::try_from('C'), Ok(Hand::Scissors(3)));
-        assert!(Hand::try_from('h').is_err());
+        assert!(Hand::try_from('_').is_err());
         // etc...
     }
 }
 ```
 
 With `TryFrom<char>` implemented for our `Hand` enum, we are ready to start parsing our input. 
+
+## Bringing it all together
+
+We now have everything ready to solve the puzzle. Like before, I won't transcribe my full solution here, though I will include it in this book's source code. The solution algorithm should look something like this:
+1) Loop over every line in the input
+2) Read through the characters in each line and parse them into `Hand` variants
+3) Pass the pair of `Hand` variants into the `game` function to calculate points won
+4) Add up all of the points won
+
+> **HINTS**
+> > You can iterate over the characters of a string using the `String::chars` method.
+>
+> > You can call the `read_as_lines` function from our root library with a `use::aoc;` statement.
