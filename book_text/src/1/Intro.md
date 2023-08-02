@@ -1,15 +1,1 @@
-# Learning Rust through Advent of Code
-
-I was first exposed to the Rust programming language on youtube with _No Boilerplate_'s [Rust videos](https://youtube.com/playlist?list=PLZaoyhMXgBzoM9bfb5pyUOT3zjnaDdSEP) excellent video on the series. From there, my path followed the [usual curriculum](https://www.rust-lang.org/learn)--learn the basics with the _[Rust Programming Language](https://doc.rust-lang.org/book/)_, maybe tackle a couple of Rustlings, and inevitably find myself reading _[Rust by Example](https://doc.rust-lang.org/rust-by-example/)_ when I hit a problem I can't solve. 
-
-However, it wasn't until I read the excellent _[Learning Rust With Entirely Too Many Linked Lists](https://rust-unofficial.github.io/too-many-lists/first-layout.html)_ that I felt I really had a grasp on the language. The book's application-first approach to teaching the patterns and idioms that a Rustacean would use in the real world helped me start thinking like a Rust programmer more than studying the catalog of Rust features had. I am grateful for what that book offered me as a fledgling Rust user.
-
-It is in the spirit of giving back that I offer this book: _Learning Rust through Advent of Code_. In it, we explore some of Rust's more common patterns and interesting features by tackling the [Advent of Code 2022](https://adventofcode.com/) coding challenges. We'll cover a wider range of topics than perhaps you've seen in other books: from the basics of a Rust program, to data modeling and io, all the way to game development with *bevy* and GPU shaders with *wgpu*. Each chapter will introduce progressively more intricate ideas, in part because each successive AoC challenge is more difficult than the last, and in part to help the reader's exposure to the material mature over the course of the book. However, assuming you have some mastery over Rust syntax, each chapter should also stand well enough alone for you to benefit from individually, without needing to read each chapter in order. 
-
-## Goals of this book
-
-I should make clear what I hope to accomplish with this book. First, by building solutions to the AoC challenge problems together, I hope to instruct you, the reader, on useful and interesting Rust patterns and features and equip you with enough knowledge to start incorporating them into your projects. Many of these features will come from the standard library. Secondly, I wish to expose you to some of the more pervasive community packages ([crates](crates.io)) so that you are prepared for your own journey with all of the amazing content the Rust community offers.
-
-Note that the AoC challenge problems are only a means to an end. This book's primary purpose is not to learn algorithms or problem solving (though that will certainly come up as we build our programs). Nor is it to find the most competitive solution to these challenge problems. Building efficient (in programmer time or CPU time) solutions is secondary to learning new material. I also don't pretend to present an exhaustive catalog of production-ready code (Rust by Example has that covered). I want to keep this material fun, easy to understand, and engaging enough to get you to start your own projects.
-
-If all of this sounds exciting to you, then I am excited to take this journey with you. Let's begin!
+# Introduction

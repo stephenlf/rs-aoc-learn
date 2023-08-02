@@ -5,3 +5,9 @@ multilingual = false
 src = "src"
 title = "Learning Rust through Advent of Code"
 description = "Learn Rust by tackling the Advent of Code 2022 challenges."
+
+[rust]
+edition = "2021"
+
+[output.html]
+git-repository-url = "https://github.com/stephenlf/rs-aoc-learn"

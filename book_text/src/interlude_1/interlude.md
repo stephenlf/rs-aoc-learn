@@ -111,12 +111,24 @@ pub fn read_as_lines<T: ToString>(path: T) -> Result<Lines<BufReader<File>>, std
 }
 ```
 
-Since we're returning type 
+## Type aliasing
+Since we're returning type `Lines<BufReader<File>>`, we should probably make that type available to our users. They may need to pass the output of our function into some other function, for example. We could make this type available by making our `use` statements `pub`, as in the following example:
+```rust
+pub use std::{fs::File, io::{BufReader, BufRead, Lines}};
+```
+However, exporting four different types just to make our one return object accessible is excessive. It increases the likelihood of namespace collisions, not to mention it's just a pain to write out `Lines<BufReader<File>>`. There is a better way.
+
+Rather than export each component of our composite type individually, we can bundle this whole type under a single identifier, or _alias_, using the `type` keyword. Let's add a type alias to `lib.rs` and update our function signature accordingly.
+
+```rust
+// aoc/src/lib.rs
+pub type LinesIter = std::io::Lines<std::io::BufReader<std::fs::File>>;
+// ..
+/*                                                       ↓ NEW               */
+pub fn read_as_lines<T: ToString>(path: T) -> Result<LinesIter, std::io::Error> {/*...*/}
+```
 
 Great job! Your library is ready and you're well equipped to tackle the next challenge.
-
-> **Public Imports?**
-> When preparing this 
 
 > **Additional Reading**
 > "[Cargo Workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html)". _The Rust Programming Lanugage_, ch 143.
