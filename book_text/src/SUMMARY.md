@@ -11,3 +11,5 @@
 - [Day 2: Rock Paper Scissors](./day_2/Day_2.md)
   - [Pattern Matching with Enums](./day_2/enums.md)
   - [The \`TryFrom\` Trait](./day_2/From.md)
+- [Day 3: Rucksack Reorganization](./day_3/day_3_intro.md)
+  - [The HashSet Collection](./day_3/hashsets.md)

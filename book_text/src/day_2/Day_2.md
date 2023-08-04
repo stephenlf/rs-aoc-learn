@@ -11,6 +11,9 @@ Sounds easy.
 
 ```bash
 # aoc
-cargo new day_2
-cd day_2
+$ cargo new day_2
+$ cd day_2
+
+# add shared library
+$ cargo add aoc --path ".."
 ```

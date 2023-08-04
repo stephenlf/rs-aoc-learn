@@ -47,6 +47,8 @@ fn main() {
 
 #[cfg(test)]
 mod day_2 {
+    use std::f32::consts::E;
+
     use super::*;
 
     #[test]
@@ -66,5 +68,26 @@ mod day_2 {
         assert_eq!(Hand::try_from('C'), Ok(Hand::Scissors(3)));
         assert!(Hand::try_from('h').is_err());
         // etc...
+    }
+
+    #[test]
+    fn test_hs() {
+        use std::collections::HashSet;
+
+        let hs1 = HashSet::from([1,2,3]);
+        let hs2 = HashSet::from([2,3,4]);
+
+            // Iterate over first hashset
+        let mut intersection = hs1.iter()       
+            // Check if each element is in second hashset
+            .filter(move |element| hs2.contains(element));   
+
+        let element = intersection.next().unwrap();
+        assert!(*element == 2 || *element == 3);
+
+        let element = intersection.next().unwrap();
+        assert!(*element == 2 || *element == 3);
+
+        assert!(intersection.next().is_none());
     }
 }
