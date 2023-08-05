@@ -13,3 +13,5 @@
   - [The \`TryFrom\` Trait](./day_2/From.md)
 - [Day 3: Rucksack Reorganization](./day_3/day_3_intro.md)
   - [The HashSet Collection](./day_3/hashsets.md)
+- [Day 4: Camp Cleanup](./day_4/day_4_intro.md)
+  - [File Parsing and IO: Pt. II](./day_4/parsing.md)
