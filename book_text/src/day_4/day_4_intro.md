@@ -9,7 +9,7 @@ Let's whip this out.
 ```bash
 # aoc
 $ cargo new day_4
-$ cd day_3
+$ cd day_4
 
 # add shared library
 $ cargo add aoc --path ".."

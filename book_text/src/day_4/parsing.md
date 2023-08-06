@@ -6,7 +6,7 @@ In this problem, we are given inputs of the following form,
 ```
 where each line represents a pair of inclusive integer ranges. 
 
-What information do we need to pull from this string? To me, it makes sense to pull out the min and max values of each range. To do that, we'll use the `String::split` and `String::split_at` functions. Take a look at their function signatures.
+What information do we need to pull from this string? To me, it makes sense to pull out the min and max values of each range. To do that, we'll use the `String::split` and `String::split_once` functions. Take a look at their function signatures.
 
 ```rust
 /// An iterator over substrings of this string slice, separated by characters matched by a pattern.

@@ -2,6 +2,12 @@
 
 This book assumes that you have read _[The Rust Programming Language](https://doc.rust-lang.org/book/)_ and have some mastery over basic Rust syntax. It also assumes that you have some experience building and running Rust programs (binaries and libraries), though I will be including all of the commands I use throughout the book. 
 
+## Solution design philosophy
+Whenever possible, I will focus these tutorials on the following principles:
+1) Focus on learning Rust over algorithms.
+2) Focus on instructive solutions over good solutions.
+3) Parse our inputs programmatically. No hard coding solutions.
+
 ## Getting started
 
 For licensing reasons, I won't be copying the Advent of Code 2022 (AoC) problems wholesale into this book, so you will need an AoC account to follow along. Make an account [on the website](https://adventofcode.com/).
