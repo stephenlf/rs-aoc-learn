@@ -49,7 +49,9 @@ impl Port {
 
     /// Prints top crate of each Dock to stout.
     pub fn print(&self) {
-        println!("{}", todo!());
+        for (i, dock) in self.0.iter().enumerate() {
+            println!("Dock {}: {}", i + 1, dock.0.last().unwrap());
+        }
     }
 
     fn create_docks(&mut self, line: &String) {
