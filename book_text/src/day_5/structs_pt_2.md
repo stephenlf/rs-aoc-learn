@@ -73,6 +73,138 @@ struct Dock(Vec<char>);
 > I argue that `Dock`'s should stay private, since there are no public functions that take `Dock`'s as inputs, and no public methods under our `Dock` struct. The `Dock` will only exist in our code's internals.
 
 ## A new port
-I must admit, parsing our input into a `Port` is a real head scratcher. Unlike previous problems, the input lines describing our `Port`'s initial condition depend on each other. Crates on line 3, for example, will need to be pushed onto our `Dock`'s before the crates on line 2 in order to preserve proper first-in, last-out ordering.
+I must admit, parsing our input into a `Port` is a real head scratcher. Unlike previous problems, the input lines describing our `Port`'s initial condition depend on each other. Crates on line 3, for example, will need to be pushed onto our `Dock`'s before the crates on line 2 in order to preserve proper first-in, last-out ordering. Alternatively, we can create our `Dock`'s backwards and `reverse` them after initialization.
 
-I propose the following solution. 
+We also don't necessarily know how many `Dock`'s we need to prepare ahead of time. Sure, we can take a peek at our input and hardcode the dock number, but then we would need to use different code for our main input and the code examples provided in the problem body. Instead, we will use math to calculate the number of docks from the _character length_ of the first line of our input. 
+
+### Calculating the number of docks
+Our input visualizes the port's starting state in the following way:
+```    
+[C] [W]    
+[A] [M] [D]
+ 1   2   3 
+```
+Docks are aligned as columns, with the contents of the docks stacked from top to bottom. Fortunately for us, each row of this dock visualization have exactly the same number of characters, and that character count depends on the number of docks (3 characters per dock, plus a 1 character spacer between docks). We can derive the following equation to calculate the number of docks:
+```
+c = 4d - 1
+d = (c + 1) / 4
+where d: number of docks
+      c: number of characters in input line
+```
+For example, the input provided above has 11 characters per line, or `(11 + 1) / 4 = 3` docks. Looks good!
+
+Let's turn that into a Rust function.
+```rust
+// aoc/day_5/src/ports.rs 
+// ..
+impl Port {
+    // ..
+    fn num_docks(line: &String) -> usize {
+        (line.len() + 1) / 4
+    }
+}
+// ..
+```
+We can then use this function to instantiate the appropriate number of docks from an input string.
+```rust
+// aoc/day_5/src/ports.rs 
+// ..
+impl Port {
+    // ..
+    fn create_docks(&mut self, line: &String) {
+        for _ in 0..Self::num_docks(line) {
+            self.0.push(Default::default());
+        }
+    }
+    fn num_docks(line: &String) -> usize {
+        (line.len() + 1) / 4
+    }
+}
+
+#[derive(Default)]
+struct Dock(Vec<char>);
+```
+
+### Grabbing crate IDs from input lines
+Let's also define a function that can add the appropriate crate to each dock given an input line. Here, we'll iterate over every 4th `char` of the input string, starting at index 1. This will give us each alphabetic crate identifier, or a blank space if no crate exists at that index. If that character is alphabetic, we add it to the appropriate `Dock`.
+```rust
+impl Port {
+    // ..
+    fn populate_dock_from_line(&mut self, line: &String) {
+        let mut chars = line.chars();
+
+        // Get first character.
+        let mut c = chars.nth(1).unwrap();
+        self.0[0].0.push(c);
+
+        let num_docks = self.0.len();
+
+        for i in 1..num_docks {
+            c = chars.nth(3).unwrap();
+            self.0[i].0.push(c)
+        }
+    }
+}
+```
+### Bringing it together
+With this function defined, we are about ready to define a `new` function for our `Port`. I invite you to give it a go yourself. Here is the general algorithm:
+1) The function takes a mutable reference to an iterator over the lines of our input as its only parameter.
+1) From the first line, instantiate the appropriate number of `Dock`'s.
+1) Loop over each line, populating the dock as you go.
+1) When the iterator reaches the line containing all numbers and whitespace, end the loop.
+Make sure to take in a mutable reference to your 
+---
+For my implementation, I will be turning our iterator into a `Peekable` [iterator](https://doc.rust-lang.org/std/iter/struct.Peekable.html). This will give us an additional function to use, `peek`, that will return a reference to the next value without consuming an iteration. This will be useful while instantiating our `Dock`'s.
+```rust
+// aoc/day_5/port.rs
+// ..
+impl Port {
+    pub fn new(lines: &mut Peekable<LinesIter>) -> Self {
+        let mut port = Self(Vec::new());
+        let line: &String = lines.peek()    // Option<&Result<String>>
+            .unwrap()       // &Result<String>
+            .as_ref()       // Result<&String>
+            .unwrap();      // &String
+
+        port.create_docks(line);        // Empty docks instantiated
+
+        loop {
+            let line = lines.next() // Option<Result<String>>
+                .unwrap().unwrap();
+
+            // Check if first character is whitespace, indicating 
+            // end of port diagram
+            if line.chars().nth(0).unwrap().is_whitespace() {
+                break;
+            }
+
+            port.populate_dock_from_line(&line);
+        }
+
+        // Docks were instantiated backwards, so we have to reverse them
+        for dock in &mut port.0 {
+            dock.0.reverse();
+        }
+
+        port
+    }
+}
+// ..
+```
+With appropriate tests, we can see that our code is working! All we need to do now is create a `Port` in our main file.
+```rust
+// aoc/day_5/main.rs
+use aoc;
+use std::iter::Peekable;
+
+mod port;
+
+fn main() {
+    let mut lines: Peekable<aoc::LinesIter> = 
+        aoc::read_as_lines("../inputs/day_5.txt").unwrap().peekable();
+
+    let mut port = port::Port::new(&mut lines);
+
+}
+```
+Great work! Now we're ready to start moving our crates around.

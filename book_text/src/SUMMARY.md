@@ -17,3 +17,4 @@
   - [File Parsing and IO: Pt. II](./day_4/parsing.md)
 - [Day 5: Supply Stacks](./day_5/day_5_intro.md)
   - [Data Modeling with Structs: Pt. II](./day_5/structs_pt_2.md)
+  - [Stacks: Push and Pop](./day_5/stack.md)
