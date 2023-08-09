@@ -49,8 +49,9 @@ impl Port {
 
     /// Prints top crate of each Dock to stout.
     pub fn print(&self) {
-        for (i, dock) in self.0.iter().enumerate() {
-            println!("Dock {}: {}", i + 1, dock.0.last().unwrap());
+        print!("Part 1: ");
+        for dock in self.0.iter() {
+            print!("{}", dock.0.last().unwrap());
         }
     }
 
@@ -82,6 +83,37 @@ impl Port {
                 self.0[i].0.push(c)
             }
         }
+    }
+}
+
+impl std::fmt::Display for Port {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut my_string = String::new();
+        let max_stack = self.0.iter()
+            .map(|dock| dock.0.len())
+            .max().unwrap();
+        
+        for i in (0..max_stack).rev() {
+            for dock in &self.0 {
+                if let Some(c) = dock.0.iter().nth(i) {
+                    my_string.push('[');
+                    my_string.push(*c);
+                    my_string.push(']');
+                    my_string.push(' ');
+                } else {
+                    my_string.push_str("    ");
+                }
+            }
+            // Remove leading whitespace
+            my_string.pop();
+            my_string.push('\n');
+        }
+
+        for i in 0..self.0.len() {
+            my_string.push_str(&format!(" {}  ",i + 1)[..4]);
+        }
+
+        write!(f, "{}", my_string)
     }
 }
 

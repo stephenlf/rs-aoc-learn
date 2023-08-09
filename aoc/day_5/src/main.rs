@@ -28,4 +28,5 @@ fn main() {
 
     port.print();
 
+    println!("\n{}", port);
 }

@@ -61,8 +61,9 @@ And finally, we fill out our `Port::print` function, which prints out the top cr
 impl Port {
     // ..
     pub fn print(&self) {
-        for (i, dock) in self.0.iter().enumerate() {
-            println!("Dock {}: {}", i + 1, dock.0.last().unwrap());
+        print!("Part 1: ");
+        for dock in self.0.iter() {
+            print!("{}", dock.0.last().unwrap());
         }
     }
     // ..
@@ -83,4 +84,19 @@ Good work! That was a bit more challenging than the previous puzzles, but we got
 ## Bonus content: The `Display` trait
 Our call to `Port::print` works fine, but it seems a little... _weird_. We already have great tooling to print out objects. Can't we use one of those?
 
-Well, yes and no...
+Yes... kinda. In the standard library we have the `std::fmt::Display` trait, which defines how objects are converted to strings in formatting macros. In other words, by implementing `std::fmt::Display` for `Port`, we can define the behavior of the following code:
+```rust
+let port = port::Port::new(/*..*/);
+println!("{}", my_port);    // Notice no `Debug` formatter specified.
+        // This pattern will also now work in `print!()`, `format!()`, etc...
+```
+Let's look at the [implementation](https://doc.rust-lang.org/std/fmt/trait.Display.html) for the `Debug` trait.
+```rust
+pub trait Display {
+    // Required method
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        write!(f, "{}", todo!())
+    }
+}
+```
+The `write!()` macro is built similarly to the `format!()` macro, with an additional parameter `f` passed in by the `fmt` function. All we have to do is replace the `todo!()` call with the string we wish to return when we print our `Port`. This can be anything you want. For example, you can simply copy and past the `Port::print` function implementation here. Or you can recreate the port diagram provided by the input. (For an implementation that recreates the input diagram, check out the source code. I'm pretty proud of it!)
