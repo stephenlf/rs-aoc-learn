@@ -24,5 +24,6 @@
   - [The Borrow Checker and The Shared Mutable Reference Problem](./day_7/the_borrow_checker.md)
   - [Shared Mutable References with Rc\<RefCell>](./day_7/refcell_rc.md)
   - [A Simulated Filesystem](./day_7/filesystem.md)
+  - [A Filesystem Crawler](./day_7/wrap_up.md)
 - [Interlude: We're going to start learning stuff that's only tangentially related to the puzzle. This is more for fun than for utility; one wouldn't expect to come across all of these concepts at a single job site.]()
 - [Day 8: ]()

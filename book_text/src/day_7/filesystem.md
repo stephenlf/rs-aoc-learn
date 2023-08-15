@@ -373,6 +373,3 @@ The goal will be to create a visualization that matches the output of the `tree`
 ```
 
 All of this is totally optional and only tangentially related to the puzzle, so I won't bore you too much with the details. In essence, we first define `Display` for `File`, which is just the file name and size, separated by a space. We then define `Display` for `Folder`, which prints its name, the recursively prints its child folders, and finally prints its files. Check out the implementation in the source code for this book.
-
-## Parsing our input
-We now have all the pieces we need to parse today's input. Let's write some code in our main file that can parse input strings as `filesystem` api commands.

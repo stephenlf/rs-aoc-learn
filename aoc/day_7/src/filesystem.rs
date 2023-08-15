@@ -75,6 +75,17 @@ impl Filesystem {
             );
         }
     }
+
+    /// Updates the folder size of all folders
+    pub fn update_all(&mut self) {
+        let update = self.pwd.borrow_mut().try_update();
+        match update {
+            None => return,
+            Some(Ok(parent)) => self.pwd = parent,
+            Some(Err(child)) => self.pwd = child,
+        }
+        self.update_all()
+    }
 }
 
 struct File {
@@ -156,6 +167,33 @@ impl Folder {
         }
         None
     }
+
+    /// Trys to calculate and update the size of self.
+    /// If calculation is successful, returns a pointer to parent.
+    /// If calculation fails, returns a pointer to child that caused failure.
+    /// If calculation succeeds and self is root, returns "None".
+    fn try_update(&mut self) -> Option<Result<Rc<RefCell<Self>>, Rc<RefCell<Self>>>> {
+        let mut size: usize = 0;
+        for folder in &self.children {
+            if let Some(child_size) = folder.borrow().size {
+                size += child_size;
+            } else {
+                return Some(Err(Rc::clone(folder)));
+            }
+        }
+
+        for file in &self.files {
+            size += file.size;
+        }
+
+        self.size = Some(size);
+
+        if let Some(parent) = &self.parent {
+            Some(Ok(Rc::clone(parent)))
+        } else {
+            None
+        }
+    }
 }
 
 impl Display for File {
@@ -167,6 +205,13 @@ impl Display for File {
 impl Display for Folder {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut s = self.name.clone();
+
+        let size = match &self.size {
+            None => String::from(" _"),
+            Some(size) => format!(" {}", size),
+        };
+
+        s.push_str(size.as_str());
         
         for child in &self.children {
             let child_fmt = format!("{}", child.borrow());
