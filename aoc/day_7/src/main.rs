@@ -1,3 +1,4 @@
 mod filesystem;
 
-fn main() {}
+fn main() {
+}

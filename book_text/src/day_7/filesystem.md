@@ -195,6 +195,12 @@ impl FileSystem {
         todo!()
     }
 
+    /// Sets pwd to listed child folder.
+    /// If folder doesn't exist, creates it.
+    pub fn cd_child(&self, folder_name: String) {
+        todo!()
+    }
+
     /// Checks if file exists in pwd. If it doesn't, adds file.
     pub fn ls_file(&self, file_name: String, file_size: usize) {
         todo!()
@@ -262,13 +268,111 @@ impl FileSystem {
 }
 ```
 
-
+For the `ls_file` command, we first check if the given file already exists in `pwd`. We can write a utility function `Folder::exists_file` to check if the given file exists. If it doesn't, then we create a new file and add it to `pwd`.
 ```rust
 // aoc/day_7/src/filesystem.rs
 // ..
 impl FileSystem {
     // ..
-    
+    /// Checks if file exists in pwd. If it doesn't, adds file.
+    pub fn ls_file(&self, file_name: String, file_size: usize) {
+        let mut pwd = self.pwd.borrow_mut();
+        if pwd.exists_file(&file_name) {
+            return;
+        } else {
+            let new_file = File {
+                name: file_name,
+                size: file_size,
+            };
+            pwd.add_file(new_file);
+        }
+    }
+    // ..
+}
+// ..
+impl Folder {
+    // ..
+    fn exists_file(&self, name: &String) -> bool {
+        for file in &self.files {
+            if &file.name == name {
+                return true;
+            }
+        }
+
+        false
+    }
+}
+```
+The logic of `ls_folder` is equivalent to that of `ls_file`. We'll just have to be careful about our borrows.
+```rust
+// aoc/day_7/src/filesystem.rs
+// ..
+impl FileSystem {
+    // ..
+    /// Checks if child folder exists in pwd. If it doesn't, add folder.
+    pub fn ls_folder(&self, folder_name: String) {
+        let mut pwd = self.pwd.borrow_mut();
+
+        if pwd.exists_file(&folder_name) {
+            return;
+        } else {
+            pwd.add_child(
+                &Folder::new(folder_name, &self.pwd)
+            );
+        }
+    }
+    // ..
+}
+// ..
+impl Folder {
+    // ..
+    fn exists_folder(&self, name: &String) -> bool {
+        for folder in &self.children {
+            if &folder.borrow().name == name {
+                return true;
+            }
+        }
+
+        false
+    }
+}
+```
+`cd_child` is just a combination of `cd_parent` logic plus a call to `ls_folder` if the child folder doesn't exist. We define a `Folder::get_child` function to help us with this.
+```rust
+// aoc/day_7/src/filesystem.rs
+// ..
+impl FileSystem {
+    // ..
+    /// Sets pwd to listed child folder.
+    /// If folder doesn't exist, creates it.
+    pub fn cd_child(&self, folder_name: String) {
+        let mut pwd = self.pwd.borrow_mut();
+    }
     // ..
 }
 ```
+
+Nice! Let's run a few tests to see if things are working well.
+
+## Testing and the `Display` trait
+
+Before moving on, let's see if our code is working. We could set up some unit tests. However, I would have a better grasp of our code if I could visualize it. Instead of unit tests, let's build a visualization of our filesystem to see if it matches up with our expectation. 
+
+We can implement the `std::fmt::Display` trait to define how our structs will get printed to the screen. I already talked about the `Display` trait in Day 5's tutorial, so I won't go into too much detail here. Instead, let's define what our visualization should look like.
+
+The goal will be to create a visualization that matches the output of the `tree` CLI command, like below.
+
+```bash
+/
+├───folder_1
+│   └───file_1_1
+├───folder_1
+│   │───file_2_1
+│   └───file_2_2
+└───file_root_1
+```
+
+All of this is totally optional and only tangentially related to the puzzle, so I won't bore you too much with the details. In essence, we first define `Display` for `File`, which is just the file name and size, separated by a space. We then define `Display` for `Folder`, which prints its name, the recursively prints its child folders, and finally prints its files. Check out the implementation in the source code for this book.
+
+## Parsing our input
+We now have all the pieces we need to parse today's input. Let's write some code in our main file that can parse input strings as `filesystem` api commands.
