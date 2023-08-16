@@ -8,6 +8,8 @@ Whenever possible, I will focus these tutorials on the following principles:
 2) Focus on instructive solutions over good solutions.
 3) Parse our inputs programmatically. No hard coding solutions.
 
+With few exceptions, I will only be providing tutorials for part 1 of each challenge puzzle. This is because solving part 2 usually requires tweaking the algorithms developed in part 1, which doesn't require learning any new Rust.
+
 ## Getting started
 
 For licensing reasons, I won't be copying the Advent of Code 2022 (AoC) problems wholesale into this book, so you will need an AoC account to follow along. Make an account [on the website](https://adventofcode.com/).

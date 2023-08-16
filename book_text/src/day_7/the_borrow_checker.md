@@ -1,4 +1,4 @@
-# The **Borrow Checker** and The Shared Mutable Reference Problem
+# The **Borrow Checker** and the Shared Mutable Reference Problem
 
 I have hinted that Rust's **borrow checker** will make today's challenge harder than expected. Before we talk about why, let's review what the borrow checker does.
 
