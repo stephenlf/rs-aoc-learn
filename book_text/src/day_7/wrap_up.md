@@ -69,3 +69,41 @@ The puzzle question goes as follows:
 > Find all of the directories with a total size of at most 100000. **What is the sum of the total sizes of those directories?**
 
 We can solve this puzzle using a crawler similar to the one we used to populate folder sizes. We query each folder for its size, travelling recursively from parent to child (or vice versa), and add up the total. In fact, we can perform the update and the query in one step. Every time `try_update` returns a pointer to a parent folder, we know that all of its child folders have been accounted for. When this happens, we just add `pwd`'s size to some data member `total_size` on our filesystem within our `update_all` function.
+
+Here's what that functionality might look like:
+
+```rust
+// aoc/day_7/src/filesystem.rs
+
+pub struct Filesystem {
+    root: Rc<RefCell<Folder>>,
+    pwd: Rc<RefCell<Folder>>,
+    pub total_pt_1: usize,      // <-- NEW
+}
+
+impl Filesystem {
+    // ..
+    /// Updates the folder size of all folders
+    pub fn update_all(&mut self) {
+        let update = self.pwd.borrow_mut().try_update();
+        match update {
+            None => return,
+            
+            // --------------------NEW-----------------------
+            Some(Ok(parent)) => {
+                let size = self.pwd.borrow().size
+                    .expect("Size should have been updated");
+                if size <= 100000 {
+                    self.total_pt_1 += size;
+                }
+                self.pwd = parent;
+            }
+            // ----------------------------------------------
+            Some(Err(child)) => self.pwd = child,
+        }
+        self.update_all()
+    }
+}
+// ..
+```
+We can then print out `fs.total_pt_1` to get our solution. Good job!

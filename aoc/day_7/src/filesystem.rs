@@ -4,6 +4,7 @@ use std::fmt::Display;
 pub struct Filesystem {
     root: Rc<RefCell<Folder>>,
     pwd: Rc<RefCell<Folder>>,
+    pub total_pt_1: usize,
 }
 
 impl Filesystem {
@@ -12,7 +13,8 @@ impl Filesystem {
         let root_folder = Folder::new_root();
         Filesystem { 
             root: Rc::clone(&root_folder), 
-            pwd: Rc::clone(&root_folder)
+            pwd: Rc::clone(&root_folder),
+            total_pt_1: 0,
         }
     }
 
@@ -81,7 +83,13 @@ impl Filesystem {
         let update = self.pwd.borrow_mut().try_update();
         match update {
             None => return,
-            Some(Ok(parent)) => self.pwd = parent,
+            Some(Ok(parent)) => {
+                let size = self.pwd.borrow().size.expect("Size should have been updated");
+                if size <= 100000 {
+                    self.total_pt_1 += size;
+                }
+                self.pwd = parent;
+            }
             Some(Err(child)) => self.pwd = child,
         }
         self.update_all()

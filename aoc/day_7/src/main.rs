@@ -26,4 +26,5 @@ fn main() {
 
     fs.update_all();
     println!("Filesystem: {}", fs);
+    println!("Part 1: {}", fs.total_pt_1);
 }
