@@ -3,9 +3,9 @@ Our challenge input consists of a 2D grid of trees. Each tree can be thought of 
 
 ```rust
 // aoc/day_8/src/main.rs
-use aoc::*;
-
 mod forest;
+
+fn main() {}
 ```
 ```rust
 // aoc/day_8/src/forest.rs      <---DIFFERENT
@@ -135,4 +135,4 @@ impl Forest {
 ```
 You can probably think of a couple of other ways to solve this. For example, you might `flatten` the `Forest`, `filter` for visible `Tree`'s, `collect` the iterator back into a `Vec`, and calculate its length. Or you might just use a `for` loop.
 
-But none of this is what I really want to learn during today's challenge. No, today, we are going to do some concurrency. Let's see what parallel processing can do for us.
+But none of this is what I really want to cover during today's challenge. No, today, we are going to do some concurrency. Let's see what parallel processing can do for us.
