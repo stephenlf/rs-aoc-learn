@@ -26,4 +26,7 @@
   - [A Simulated Filesystem](./day_7/filesystem.md)
   - [A Filesystem Crawler](./day_7/wrap_up.md)
 - [Interlude: A Shift From Fundamentals](./interlude_2/interlude.md)
-- [Day 8: ]()
+- [Day 8: Treetop Tree House](./day_8/day_8_intro.md)
+  - [A Single-Threaded Solution](./day_8/single_threaded.md)
+  - [A Multi-Threaded Solution](./day_8/multi_threaded.md)
+  - [Benchmarking with Criterion](./day_8/criterion.md)
