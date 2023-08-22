@@ -11,3 +11,9 @@ edition = "2021"
 
 [output.html]
 git-repository-url = "https://github.com/stephenlf/rs-aoc-learn"
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
+
+[preprocessor]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"

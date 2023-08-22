@@ -30,3 +30,5 @@
   - [A Single-Threaded Solution](./day_8/single_threaded.md)
   - [A Multi-Threaded Solution](./day_8/multi_threaded.md)
   - [Benchmarking with Criterion](./day_8/criterion.md)
+- [Day 9: Rope Bridge](./day_9/day_9_intro.md)
+  - [The State Machine](./day_9/state_machine.md)
