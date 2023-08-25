@@ -32,3 +32,4 @@
   - [Benchmarking with Criterion](./day_8/criterion.md)
 - [Day 9: Rope Bridge](./day_9/day_9_intro.md)
   - [The State Machine](./day_9/state_machine.md)
+- [Day 10: Cathode-Ray Tube](./day_10/day_10_intro.md)

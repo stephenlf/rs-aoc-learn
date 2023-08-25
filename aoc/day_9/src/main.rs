@@ -87,7 +87,8 @@ impl StateMachine {
         (dir, rep)
     }
 
-    fn step(&mut self, direction: MoveH, _num_steps: u32) {
+    //// ANCHOR: step
+    fn step(&mut self, direction: MoveH) {
         let (dx, dy) = match (self.relative_h, direction) {
             (PositionH::Up, MoveH::Up) => {
                 (0, 1)
@@ -124,7 +125,11 @@ impl StateMachine {
                 self.relative_h = PositionH::DownRight;
                 (0,0)
             }
-            (PositionH::Right, MoveH::Left) | (PositionH::Up, MoveH::Down) | (PositionH::Down, MoveH::Up) | (PositionH::Left, MoveH::Right) => {
+            (PositionH::Right, MoveH::Left) | 
+                (PositionH::Up, MoveH::Down) | 
+                (PositionH::Down, MoveH::Up) | 
+                (PositionH::Left, MoveH::Right) => 
+            {
                 self.relative_h = PositionH::Center;
                 (0,0)
             }
@@ -222,11 +227,12 @@ impl StateMachine {
         self.abs_t = (x + dx, y + dy);
         self.visited.insert(self.abs_t.clone());
     }
+    //// ANCHOR_END: step
 
     pub fn execute_line(&mut self, s: String) {
         let (direction, num_steps) = Self::parse_line(s);
         for _ in 0..num_steps {
-            self.step(direction, num_steps);
+            self.step(direction);
         }
     }
 }

@@ -3,16 +3,19 @@ We can model the motion of our rope's tail as a [state machine](https://en.wikip
 
 With Rust's enums, we can greatly simplify developing correct state machines by [making invalid states unrepresentable](https://youtu.be/7GzQArrek7A). Let's first define a `StateMachine` struct which holds the relative position of the head (relative to the tail), the absolute position of the tail, and the set of all visited coordinates.
 ```rust
+// aoc/day_9/src/main.rs
 {{ #include ../../../aoc/day_9/src/main.rs:state_machine}}
 ```
 Next, I will model the machine's valid **states** and **transitions** with enums. The states consist of all of the relative positions the rope's head can take (e.g. Up, Down, Center, UpLeft, etc.), and the transitions are each of the four directions the head can move to. 
 
 First, the states.
 ```rust
+// aoc/day_9/src/main.rs
 {{ #include ../../../aoc/day_9/src/main.rs:states}}
 ```
 And the transitions.
 ```rust
+// aoc/day_9/src/main.rs
 {{ #include ../../../aoc/day_9/src/main.rs:transitions}}
 ```
 Let's consider the state machine I have made, conceptually. Each of the relative positions of the head is a separate state. Assuming the tail is at the center of our diagram...
@@ -87,9 +90,22 @@ With the relative change in the tail's position calculated, we can then calculat
 
 I think I can start putting this into code.
 
-First, let's define a `new` `StateMachine`. I will preload the machine's hashset with the starting position (0, 0)
+First, I'll define a `new` `StateMachine`. I will preload the machine's hashset with the starting position (0, 0).
 ```rust
+// aoc/day_9/src/main.rs
+// ..
 impl StateMachine {
 {{ #include ../../../aoc/day_9/src/main.rs:new}}
 }
 ```
+Next, I'll start throwing my state/transition pairs into a match statement. The state machine logic will be wrapped in a function `step`, which takes in a direction and updates `self.abs_t` and `self.relative_h` appropriately.
+
+I'm going to include the whole function below, mostly as a demonstration of why I think this programming pattern is bad for this use case. But just know that _I didn't miss a single arm_. Neat, right?
+```rust
+// aoc/day_9/src/main.rs
+// ..
+impl StateMachine {
+{{ #include ../../../aoc/day_9/src/main.rs:step}}
+}
+```
+But seriously, writing this code gave me a headache. Let's move on.
