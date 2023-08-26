@@ -12,7 +12,7 @@ Let's review some of the bigger concepts we've learned so far:
 - The borrow checker and `Rc<RefCell<_>>` pattern
 What an impressive list! 
 
-As we move on with Advent of Code's challenges, we will start to repeat a lot of the same tools and patterns we used to solve previous problems. For example, _ten_ of the following challenges will have some sort of 2D or 3D vector incorporated into the prompt (days 8, 9, 12, 14, 15, 17, 18, 22, 23, and 24).
+As we move on with Advent of Code's challenges, we will start to repeat a lot of the same tools and patterns we used to solve previous problems. For example, _ten_ of the following challenges will have some sort of 2D or 3D vector incorporated into the prompt (days 8, 9, 10, 12, 14, 15, 17, 18, 22, 23, and 24).
 
 Rather than repeat the same tutorials over and over, I will instead shift the focus of this book away from Rust's fundamental structures and patterns in favor of learning Rust's powerful ecosystem of community-developed [crates](https://crates.io). 
 
