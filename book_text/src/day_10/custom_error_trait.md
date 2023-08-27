@@ -108,10 +108,10 @@ We can capture these failure types in an enum. Let's remove our error struct and
 ```rust
 // aoc/day_10/src/lib.rs
 // ..
-enum TokenParserError {
-    UnexpectedTokenError,
-    BadArgumentError,
-    MissingArgumentError,
+pub enum TokenParserError {
+    UnexpectedToken,
+    BadArgument,
+    MissingArgument,
 }
 ```
 
@@ -124,18 +124,18 @@ While we're at it, let's derive `Debug` and implement the `Error` trait as well.
 // aoc/day_10/src/lib.rs
 // ..
 #[derive(Debug)]
-enum TokenParserError {
+pub enum TokenParserError {
     // ..
 }
 
 impl std::fmt::Display for TokenParserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let message = match self {
-            &Self::UnexpectedTokenError => 
+            &Self::UnexpectedToken => 
                 "unexpected token",
-            &Self::BadArgumentError => 
+            &Self::BadArgument => 
                 "bad argument; expected a whole number",
-            &Self::MissingArgumentError => 
+            &Self::MissingArgument => 
                 "missing argument; expected a whole number",
         };
         write!(f, "{message}")
@@ -144,7 +144,109 @@ impl std::fmt::Display for TokenParserError {
 
 impl std::error::Error for TokenParserError {}
 ```
-It should be noted that even though we implement `Display` for our error, most end users of our library will only ever see the `Debug` message. Calling `Err(TokenParsingError::BadTokenError).unwrap()`, for example, will only provide the following output:
+It should be noted that even though we implement `Display` for our error, most end users of our library will only ever see the `Debug` message. Calling `Err(TokenParserError::BadArgument).unwrap()`, for example, will only provide the following output:
 ```bash 
-thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: MissingArgumentError'
+thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: BadArgument'
+                                                              # ^ Debug message only
 ```
+So it's important that our debug message is relatively descriptive as well. See [this thread](https://users.rust-lang.org/t/why-does-error-require-display-but-then-not-use-it/65273) for more details.
+
+### Making errors composable with other errors and comparable to other types
+I think we already have this aspect figured out. Our error type names `TokenParserError`, `BadArgument`, etc. are all descriptive enough and generally follow the patterns created by other libraries. This is a bit of a looser requirement, especially since different libraries have their own little spins on the error type. But, in general, I don't think anybody would need more than a cursory scan of a message containing our error type to know what's going on. 
+
+It's also very clear that our `TokenParserError` type is an _**error**_--clarity that's not afforded to us when we use `&'static str` for our errors.
+
+### Holding information about our error
+Our `TokenParserError` doesn't yet capture any specific information about the errors it describes. We can fix that by attaching a data member to our variants. I can think of two instances where that might be appropriate:
+
+1) Our `UnexpectedToken` error can store the token that triggered the error. 
+2) Our `BadArgument` error can store the argument that triggered the error.
+```rust
+// aoc/day_10/src/lib.rs
+// ..
+pub enum TokenParserError {
+    /// Captures the unexpected token that was supplied
+    UnexpectedToken(String),
+    /// Captures the bad argument that was supplied
+    BadArgument(String),
+    MissingArgument,
+}
+```
+These items can be passed up in our error message, or referenced by our end users later. Let's update our `Display` trait to reflect this additional data.
+```rust
+// aoc/day_10/src/lib.rs
+// ..
+impl std::fmt::Display for TokenParserError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let message = match self {
+            Self::UnexpectedToken(token) => 
+                format!("unexpected token {token:?}"),
+            Self::BadArgument(argument) => 
+                format!("bad argument {argument:?}; expected a whole number"),
+            Self::MissingArgument => 
+                "missing argument; expected a whole number".to_string(),
+        };
+        write!(f, "{message}")
+    }
+}
+```
+## Bringing it together
+I think we have a solid error type defined. It's clear, comparable, and composable. It plays nicely with the type system, and carries useful information. Let's look at it again to enjoy its beauty.
+```rust
+// aoc/day_10/src/lib.rs
+// ..
+
+#[derive(Debug)]
+/// Error that may be thrown while parsing commands
+pub enum TokenParserError {
+    /// Captures the unexpected token that was supplied
+    UnexpectedToken(String),
+    /// Captures the bad argument that was supplied
+    BadArgument(String),
+    MissingArgument,
+}
+
+impl std::fmt::Display for TokenParserError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let message = match self {
+            Self::UnexpectedToken(token) => 
+                format!("unexpected token {token:?}"),
+            Self::BadArgument(argument) => 
+                format!("bad argument {argument:?}; expected a whole number"),
+            Self::MissingArgument => 
+                "missing argument; expected a whole number".to_string(),
+        };
+        write!(f, "{message}")
+    }
+}
+
+impl std::error::Error for TokenParserError {}
+```
+_Lovely_. But wait, why did we make an error type in the first place?
+> ```rust
+> // aoc/day_10/src/lib.rs
+> // ..
+> impl TryFrom::<String> for Token {/*..*/}
+> ```
+That's right! We needed some error type to implement `TryFrom` in our parser. Let's drop our new `TokenParserError` into the trait's `Error` type alias definition.
+```rust
+// aoc/day_10/src/lib.rs
+// ..
+impl TryFrom::<String> for Token {
+    type Error = TokenParserError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        todo!()
+    }
+}
+```
+Now we just have to set up our logic! For my implementation, I'll first split the input string at whitespace, then match for the patterns I expect to be present. For all other patterns, I will throw the appropriate error. Here's what that looks like:
+```rust
+// aoc/day_10/src/lib.rs
+// ..
+{{ #include ../../../aoc/day_10/src/lib.rs:tryfrom}}
+// ..
+```
+Wonderful! We now have a robust, idiomatic way to parse our inputs.
+
+There's nothing new that can be learned about Rust in solving the rest of this puzzle, so I will leave that to you. Check out the source code for my full solution. Instead, let's see if we can't make a pretty picture of our outputs.
