@@ -1,7 +1,7 @@
 # Day 7: No Space Left On Device 
 > **KEY CONCEPTS**
 > - The _borrow checker_ ❗
-> - Mutable shared references with the `RefCell<Rc>` pattern
+> - Mutable shared references with the `Rc<RefCell<_>>` pattern
 > - The `Display` trait (again)
 
 For today's challenge, we are asked to simulate a virtual filesystem with file names, file sizes, and nested folders. We will use the challenge input to populate our filesystem, then we will use the filesystem to answer questions about folder sizes.

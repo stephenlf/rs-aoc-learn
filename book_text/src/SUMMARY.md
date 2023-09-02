@@ -35,3 +35,5 @@
 - [Day 10: Cathode-Ray Tube](./day_10/day_10_intro.md)
   - [Custom Error Type](./day_10/custom_error_trait.md)
   - [The Gif Crate](./day_10/gif_crate.md)
+- [Day 11: Monkey in the Middle](./day_11/day_11_intro.md)
+  - [Closure Types and Double-Ended Queues](./day_11/closures.md)

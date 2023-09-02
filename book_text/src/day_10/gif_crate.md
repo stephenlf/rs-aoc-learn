@@ -1,11 +1,8 @@
 # The `gif` Crate
 
-Part 2 of this puzzle has us simulating a CRT screen. Rather than simply writing to an ASCII string, let's make a visual like the one below. 
+Part 2 of this puzzle has us simulating a CRT screen. Rather than simply writing to an ASCII string, let's make a visual like the one below. \[This visual shows the solution after running the challenge's example input.\]
 
-<details><summary>SPOILERS: Solution ahead</summary>
 <img src="./crt.gif" style="width:200px;"/>
-</details>
-
 
 To power our gif maker, we'll be using the [`gif` crate](https://crates.io/crates/gif). 
 
