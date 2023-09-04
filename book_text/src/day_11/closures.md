@@ -11,8 +11,8 @@ pub struct Monkey {
     items: ??
     operation: ??
     test: ??
-    target_if_true = usize
-    target_if_false = usize
+    target_if_true: usize
+    target_if_false: usize
 }
 ```
 
@@ -35,13 +35,132 @@ Let's add that to our `Monkey` struct.
 use std::collections::VecDeque;
 
 pub struct Monkey {
-    id: usize
-    items: VecDeque<usize>
-    operation: ??
-    test: ??
-    target_if_true = usize
-    target_if_false = usize
+    id: usize,
+    items: VecDeque<usize>,
+    operation: ??,
+    test: ??,
+    target_if_true: usize,
+    target_if_false: usize,
 }
 ```
 
 ## Closure Types
+Our `Monkey`s' `operation` and `test` data members both encode _functions_. But how can we encode a function from our input?
+
+One way would be to capture the unique parameters of each monkey's `operation` and `test`, then reconstruct the appropriate function at runtime. An incomplete implementation might look something like this:
+
+```rust
+struct DivisibilityTestMonkey {
+    divisor: usize
+    monkey_if_true: usize
+    monkey_if_false: usize
+}
+
+impl DivisibilityTestMonkey {
+    /// Takes in an item value and returns target monkey based
+    /// on the items divisibility against self.divisor
+    fn divisibility_test(&self, item: usize) -> usize {
+        if item % divisor == 0 {
+            self.monkey_if_true
+        } else {
+            self.monkey_if_false
+        }
+    }
+}
+```
+This approach works fine for the divisibility test. However, trying to encode an `operation` like this will start to get unruly. Given the following representation of each operation,
+```
+        operand   operator  operand
+           V          V        V
+new = [old | int] [ + | * ]   int
+```
+we would need to encode the first _operand_ (previous value or some integer), the _operator_ (addition or multiplication), and the second _operand_. Not crazy, but not beautiful, either. We may also anticipate some runtime cost as well. Every time we called our `operation`, our program would have to traverse a tree of possible functions, reconstructing the function as it goes. Now, perhaps CPU caching could make the runtime cost negligible. But there is a better way.
+
+Logically, it makes sense to model the entire `operation` or `test` function as a single object. Rust's [closure types](https://doc.rust-lang.org/reference/types/closure.html) let us do that. Let's see what that looks like.
+
+```rust
+// aoc/day_11/lib.rs
+// ..
+pub struct Monkey {
+    id: usize,
+    items: VecDeque<usize>,
+    operation: Box<dyn Fn(usize) -> usize>,  // NEW
+    test: Box<dyn Fn(usize) -> bool>,        // NEW
+    target_if_true: usize,
+    target_if_false: usize,
+}
+```
+In our assignments, `Fn(usize) -> usize` defines the [immutable closure trait](https://doc.rust-lang.org/std/ops/trait.Fn.html). It can be read as "a function that takes a `usize` and returns a `usize`." Unline `FnMut` and `FnOnce`, the `Fn` trait does not mutate or take ownership of its input variables or environment. (Since `usize` implements `Copy`, we don't need to use an immutable reference in our definition.)
+
+The `dyn` keyword specifies that our data members are [trait objects](https://doc.rust-lang.org/std/keyword.dyn.html), meaning they don't have a specific type. This is can be read as "some object of unknown type that implements trait `Fn(usize) -> usize`. 
+
+Since the size of trait objects can't be known at compile time, they must be placed behind a reference or smart pointer. That's where `Box` comes in. In total, our `operation`'s and `test`'s type notations may be read as "a pointer to an anonymous functions that takes in a `usize` and returns a `usize` (or a `bool`, for `test`).
+
+> Note that you've likely seen a similar pattern with error handling. We often use `Box<dyn Error>` to denote "some object that implements the `Error` type."
+
+This looks good! Let's see what parsing will look like for these new types.
+
+## Parsing Closures and VecDeques 
+
+Let's create three methods to act as parsers into each one of our data members. Each method will correspond to a single line of our input.
+
+```rust
+// aoc/day_11/lib.rs
+// ..
+impl Monkey {
+    /// Pulls monkey.id from the first line of each monkey block the input
+    fn parse_id(line: String) -> usize { todo!() }
+
+    /// Creates a VecDeque populated with items in the second line of the block
+    fn parse_items(line: String) -> VecDeque<usize> { todo!() }
+
+    /// Creates a closure matching `operation`, the third line of the block
+    fn parse_operation(line: String) -> Box<dyn Fn(usize) -> usize> { todo!() }
+
+    /// Creates a closure matching `test`, the fourth line of the block
+    fn parse_test(line: String) -> Box<dyn Fn(usize) -> bool> { todo!() }
+
+    /// Pulls the id of the target monkey (if test passes) from the fifth line
+    fn parse_true_monkey(line: String) -> usize { todo!() }
+    
+    /// Pulls the id of the target monkey (if test fails) from the fifth line
+    fn parse_false_monkey(line: String) -> usize { todo!() }
+}
+```
+The `parse_id`, `parse_true_monkey`, and `parse_false_monkey` implementations are trivial, requiring only that we pull a single integer from each line. Here's my implementation of `parse_true_monkey`:
+
+```rust
+// aoc/day_11/lib.rs
+// ..
+impl Monkey {
+    // ..
+    fn parse_true_monkey(line: String) -> usize { 
+        // Example input: "    If true: throw to monkey 1"
+        assert_eq!(&line[..29], "    If true: throw to monkey ");
+        (&line[29..]).parse().unwrap()
+    }
+    // ..
+}
+```
+
+Creating a new `VecDeque` is also simple, since `VecDeque`'s syntax is very similar to `Vec`'s. In my implementation, I use `VecDeque`'s builtin `from_iter` constructor, though the same result can be achieved with a combination of `new` and `push_back`.
+
+```rust
+// aoc/day_11/lib.rs
+// ..
+impl Monkey {
+    // ..
+    fn parse_items(line: String) -> VecDeque<usize> { 
+        // Example input: "  Starting items: 66, 59, 64, 51"
+        assert_eq!(&line[..18], "  Starting items: ");
+        
+        let item_iter = (&line[18..])
+            .split(',')
+            .map(|item| item.trim().parse::<usize>().unwrap());
+
+        VecDeque::from_iter(item_iter)
+    }
+    // ..
+}
+```
+Creating 
