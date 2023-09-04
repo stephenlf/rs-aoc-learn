@@ -163,4 +163,50 @@ impl Monkey {
     // ..
 }
 ```
-Creating 
+Creating our closure types may be a bit daunting because we haven't seen it before. But it isn't anything too new. Consider the following closure, which checks for divisibility against 7.
+```rust
+let my_closure: impl Fn(usize) -> bool = {
+    |x: usize| x % 7 == 0
+};
+```
+> Note that the code `x % 7 == 0` is equivalent to `if x % 7 == 0 {true} else {false}`
+
+We can parameterize this closure by assigning the divisor `7` to a variable _outside_ of the closure, the `move`ing that variable into the closure.
+```rust
+let divisor: usize = 7;
+let my_closure = {
+    move |x: usize| x % divisor == 0
+};
+```
+> `move`ing the divisor into the closure transfers ownership of the variable to the closure, meaning we don't have to worry about the lifetime of `divisor` anymore.
+
+With just a little refactoring and `String` logic, this pattern will serve as our `Monkey::parse_test` function.
+```rust
+// aoc/day_11/lib.rs
+// ..
+impl Monkey {
+    // ..
+    /// Creates a closure matching `test`, the fourth line of the block
+    fn parse_test(line: String) -> Box<dyn Fn(usize) -> bool> { 
+        // Example input: "  Test: divisible by 11"
+        assert_eq!(&line[..21], "  Test: divisible by ");
+        let divisor = (&line[21..]).parse::<usize>().unwrap();
+
+        let closure = { move |x: usize| x % divisor == 0 };
+        
+        Box::new(closure)
+    }
+    // ..
+}
+```
+As a syntactical note, we can now call this closure using `function()` syntax. With `Box`ed closures, the compiler will automatically derefence our closure for us, like so:
+```rust
+let input = String::from("  Test: divisible by 11");
+let divisible_by_11 = Monkey::parse_test(input);
+
+assert_eq!(divisible_by_11(22), true);
+assert_eq!(divisible_by_11(23), false);
+```
+The last thing left to parse is our `operation`. It can be done in much the same way as `test`, with some nuance about how to account for the different operators. I will leave that as an exercise for you, though I will leave my complete solution in the source code.
+
+Creating a new monkey now just requires calling our parsers on each line of the input in the right order. That will again be left as an exercise.
