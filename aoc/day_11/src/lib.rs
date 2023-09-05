@@ -1,5 +1,6 @@
 use std::collections::VecDeque;
-use aoc::*;
+use aoc;
+use std::fmt::Debug;
 
 pub struct Monkey {
     pub id: usize,
@@ -11,8 +12,18 @@ pub struct Monkey {
 }
 
 impl Monkey {
-    pub fn new(lines: &mut LinesIter) -> Self {
-        let id = Self::parse_id(lines.next().unwrap().unwrap());
+    /// Initialize a new monkey from a Lines iterator.
+    pub fn new(lines: &mut aoc::LinesIter) -> Option<Self> {
+        // Check if first line is "None". If so, return early. Otherwise, continue parsing.
+        let first_line: String = if let Some(line) = lines.next() {
+            line.unwrap()
+        } else {
+            return None
+        };
+
+        // Pass each line into relevant parser. Note that the first line was already
+        // read, so we pass in that variable instead of calling `lines.next()` again.
+        let id = Self::parse_id(first_line);
         let items = Self::parse_items(lines.next().unwrap().unwrap());
         let operation = Self::parse_operation(lines.next().unwrap().unwrap());
         let test = Self::parse_test(lines.next().unwrap().unwrap());
@@ -20,16 +31,32 @@ impl Monkey {
         let target_if_false = Self::parse_false_monkey(lines.next().unwrap().unwrap());
         let _ = lines.next();
 
-        Self {
+        Some( Self {
             id,
             items,
             operation,
             test,
             target_if_true,
             target_if_false
-        }
+        })
     }
 
+    /// A single turn. The output is given as a list of pairs of numbers 
+    /// Vec<(usize, usize)> where item.0 is the target monkey and item.1
+    /// is the item to add to the stack.
+    pub fn throw_items(&mut self) -> Vec<(usize, usize)> {
+        let mut thrown_items: Vec<(usize, usize)> = vec![];
+        while let Some(item) = self.items.pop_front() {
+            let item = (self.operation)(item) / 3;
+            match (self.test)(item) {
+                true => thrown_items.push((self.target_if_true, item)),
+                false => thrown_items.push((self.target_if_false, item)),
+
+            }
+        }
+        thrown_items
+    }
+    
     /// Pulls monkey.id from the first line of each monkey block the input
     fn parse_id(line: String) -> usize { 
         // Example input: "Monkey 0:"
@@ -103,6 +130,12 @@ impl Monkey {
         // Example input: "    If false: throw to monkey 4"
         assert_eq!(&line[..30], "    If false: throw to monkey ");
         (&line[30..]).parse().unwrap()
+    }
+}
+
+impl Debug for Monkey {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Monkey {} with items {:?}", self.id, self.items)
     }
 }
 
