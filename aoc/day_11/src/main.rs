@@ -1,16 +1,22 @@
 use aoc;
 use day_11::*;
-use std::{rc::Rc, cell::RefCell};
+use std::cell::RefCell;
 
 
 fn main() {
     // Initialize monkeys
     let mut lines = aoc::read_as_lines("../inputs/day_11.txt").unwrap();
-    let mut monkeys: Vec<Rc<RefCell<Monkey>>> = vec![];
+
+    // In our loop of rounds, we will need to pull from one monkey and push to 
+    // another, all without breaking the loop. The borrow checker won't let us
+    // do that with monkeys stored in Vec<Monkey>, so we wrap them in RefCell
+    // to allow for run-time borrow checks.
+    let mut monkeys: Vec<RefCell<Monkey>> = vec![];
     while let Some(monkey) = Monkey::new(&mut lines) {
-        monkeys.push(Rc::new(RefCell::new(monkey)));
+        monkeys.push(RefCell::new(monkey));
     }
 
+    // Simulate rounds 1-20
     for _ in 0..20 {
         for monkey in monkeys.iter() {
             let items = monkey.borrow_mut().throw_items();

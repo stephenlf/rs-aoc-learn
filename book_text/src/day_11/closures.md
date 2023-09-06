@@ -206,6 +206,11 @@ let divisible_by_11 = Monkey::parse_test(input);
 
 assert_eq!(divisible_by_11(22), true);
 assert_eq!(divisible_by_11(23), false);
+
+// Closures within an object may require braces to keep the compiler informed
+let monkey = Monkey { test: divisible_by_11, /*..*/ }
+assert_eq!((monkey.test)(22), true);
+assert_eq!((monkey.test)(23), false);
 ```
 The last thing left to parse is our `operation`. It can be done in much the same way as `test`, with some nuance about how to account for the different operators. I will leave that as an exercise for you, though I will leave my complete solution in the source code.
 

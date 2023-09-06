@@ -9,6 +9,7 @@ pub struct Monkey {
     pub test: Box<dyn Fn(usize) -> bool>,        // NEW
     pub target_if_true: usize,
     pub target_if_false: usize,
+    pub touch_counter: usize,
 }
 
 impl Monkey {
@@ -37,7 +38,8 @@ impl Monkey {
             operation,
             test,
             target_if_true,
-            target_if_false
+            target_if_false,
+            touch_counter: 0,
         })
     }
 
@@ -46,7 +48,9 @@ impl Monkey {
     /// is the item to add to the stack.
     pub fn throw_items(&mut self) -> Vec<(usize, usize)> {
         let mut thrown_items: Vec<(usize, usize)> = vec![];
+
         while let Some(item) = self.items.pop_front() {
+            self.touch_counter += 1;
             let item = (self.operation)(item) / 3;
             match (self.test)(item) {
                 true => thrown_items.push((self.target_if_true, item)),
@@ -54,6 +58,7 @@ impl Monkey {
 
             }
         }
+        
         thrown_items
     }
     
