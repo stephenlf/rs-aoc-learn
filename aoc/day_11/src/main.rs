@@ -26,9 +26,16 @@ fn main() {
         }
     }
 
-    for monkey in monkeys {
-        println!("{:?}", monkey);
-    }
+    let mut touches = monkeys.iter()
+        .map(|monkey| monkey.borrow().touch_counter)
+        .collect::<Vec<_>>();
+
+    // Sorts in reverse order, largest to smallest.
+    touches.sort_by(|a, b|b.cmp(a));
+
+    println!("{:?}", touches);
+
+    println!("Part 1: {}", touches[0] * touches[1]);
 
 }
 

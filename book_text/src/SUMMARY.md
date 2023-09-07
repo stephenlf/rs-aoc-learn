@@ -37,3 +37,4 @@
   - [The Gif Crate](./day_10/gif_crate.md)
 - [Day 11: Monkey in the Middle](./day_11/day_11_intro.md)
   - [Closure Types and Double-Ended Queues](./day_11/closures.md)
+- [Day 12: Hill Climbing Algorithm](./day_12/day_12_intro.md)
